@@ -1,3 +1,15 @@
+'''
+How to write a simple Postgres JSON wrapper with Python:
+https://levelup.gitconnected.com/how-to-write-a-simple-postgres-json-wrapper-with-python-ef09572daa66
+
+How do I get JSON data from RESTful service using Python?:
+https://stackoverflow.com/questions/7750557/how-do-i-get-json-data-from-restful-service-using-python
+
+Read JSON response in Python:
+https://stackoverflow.com/questions/33282067/read-json-response-in-python
+
+'''
+
 import json
 import pandas as pd
 from pprint import pprint
@@ -22,18 +34,23 @@ from pprint import pprint
 # response = requests.get(url).json()
 # pprint(response)
 
-path = 'c:/Users/admin/PycharmProjects/json_parser/data/'
-table_names_file = 'TABLE_NAMES - z_iusi_ws_01.json'
+table_names_file = 'c:/Users/admin/PycharmProjects/json_parser/data/TABLE_NAMES - z_iusi_ws_01.json'
 
-with open(path + table_names_file, 'r') as json_data:
-    # use load() rather than loads() for JSON files
-    record_list = json.load(json_data)
 
-pprint(record_list)
-table_names = record_list['TABLE_NAMES']
-df = pd.DataFrame(table_names)
-print(df['NAME'][0])
+with open(path + table_names_file, 'r') as json_file:
+    json_data = json.load(json_file)
 
-# df_tables = pd.read_json(record_list['TABLE_NAMES'], orint='records'   )
-# print(df_tables)
+class JsonParser:
+    def __init__(self, **args):
+        self.user = args.get('user', 'postgres')
+        self.port = args.get('port', 5432)
+        self.dbname = args.get('dbname', 'world')
+        self.host = args.get('host', 'localhost')
+        self.connection = None
+
+pprint(json_data)
+table_names = [rec['NAME'] for rec in json_data['TABLE_NAMES']]
+print(table_names)
+
+#
 
