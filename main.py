@@ -9,7 +9,7 @@ Read JSON response in Python:
 https://stackoverflow.com/questions/33282067/read-json-response-in-python
 
 '''
-
+import os
 import json
 import pandas as pd
 from pprint import pprint
@@ -34,23 +34,35 @@ from pprint import pprint
 # response = requests.get(url).json()
 # pprint(response)
 
-table_names_file = 'c:/Users/admin/PycharmProjects/json_parser/data/TABLE_NAMES - z_iusi_ws_01.json'
+# path = 'c:/Users/admin/PycharmProjects/json_parser/data/'
+path = 'd:/Git/Python/json_parser/data'
+table_names_file = 'TABLE_NAMES - z_iusi_ws_01.json'  # список таблиц
+datamarts_list_file = 'Showcase list - Z_IUSI_WS_DATAMARTS.json'  # список
+matadata_file = 'Metadata - z_iusi_ws_metadata.json'  # метаданные
 
-
-with open(path + table_names_file, 'r') as json_file:
+# Наименования таблиц:
+with open(os.path.join(path, table_names_file), 'r') as json_file:
     json_data = json.load(json_file)
-
-class JsonParser:
-    def __init__(self, **args):
-        self.user = args.get('user', 'postgres')
-        self.port = args.get('port', 5432)
-        self.dbname = args.get('dbname', 'world')
-        self.host = args.get('host', 'localhost')
-        self.connection = None
-
-pprint(json_data)
 table_names = [rec['NAME'] for rec in json_data['TABLE_NAMES']]
-print(table_names)
 
-#
+# Список витрин:
+with open(os.path.join(path, datamarts_list_file), 'r') as json_file:
+    json_data = json.load(json_file)
+datamarts = json_data['DATAMARTS']
 
+# Метаданные витрины '/BIC/AIRSHINYL00' <- УТОЧНИТЬ в URL!!!:
+with open(os.path.join(path, matadata_file), 'r') as json_file:
+    json_data = json.load(json_file)
+metadata = json_data['METADATA']
+
+# Pandas DataFrame:
+df = pd.json_normalize(metadata)
+print(df)
+
+# pprint(metadata)
+fieldnames = [rec['FIELDNAME'] for rec in metadata]
+
+
+print('Список таблиц:', table_names)
+print('Список витрин:', datamarts)
+print('Список полей витрины "/BIC/AIRSHINYL00":', fieldnames, len(fieldnames))
