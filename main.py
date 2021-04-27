@@ -35,23 +35,23 @@ from pprint import pprint
 # pprint(response)
 
 # path = 'c:/Users/admin/PycharmProjects/json_parser/data/'
-path = 'd:/Git/Python/json_parser/data'
-table_names_file = 'TABLE_NAMES - z_iusi_ws_01.json'  # список таблиц
-datamarts_list_file = 'Showcase list - Z_IUSI_WS_DATAMARTS.json'  # список
-matadata_file = 'Metadata - z_iusi_ws_metadata.json'  # метаданные
-
-# Наименования таблиц:
-with open(os.path.join(path, table_names_file), 'r') as json_file:
-    json_data = json.load(json_file)
-table_names = [rec['NAME'] for rec in json_data['TABLE_NAMES']]
+# path = 'd:/Git/Python/json_parser/data'
+path = 'c:/Users/admin/PycharmProjects/json_parser/data'
+datamarts_list_file = 'Datamarts - Z_IUSI_WS_DATAMARTS.json'  # список
+matadata_AIRSHINYL00_file = 'Metadata - /BIC/AIRSHINYL00 - z_iusi_ws_metadata.json'  # метаданные витрины AIRSHINYL00
 
 # Список витрин:
 with open(os.path.join(path, datamarts_list_file), 'r') as json_file:
     json_data = json.load(json_file)
 datamarts = json_data['DATAMARTS']
 
+class Datamart:
+    '''Базовый класс витрины'''
+
+
+
 # Метаданные витрины '/BIC/AIRSHINYL00' <- УТОЧНИТЬ в URL!!!:
-with open(os.path.join(path, matadata_file), 'r') as json_file:
+with open(os.path.join(path, matadata_AIRSHINYL00_file), 'r') as json_file:
     json_data = json.load(json_file)
 metadata = json_data['METADATA']
 
@@ -59,10 +59,10 @@ metadata = json_data['METADATA']
 df = pd.json_normalize(metadata)
 print(df)
 
+df.to_csv(os.path.join(path, 'metadata.csv'), sep='\t', encoding='utf-8', index=False)
+
 # pprint(metadata)
 fieldnames = [rec['FIELDNAME'] for rec in metadata]
 
-
-print('Список таблиц:', table_names)
 print('Список витрин:', datamarts)
 print('Список полей витрины "/BIC/AIRSHINYL00":', fieldnames, len(fieldnames))
