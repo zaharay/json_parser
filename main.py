@@ -36,33 +36,49 @@ from pprint import pprint
 
 # path = 'c:/Users/admin/PycharmProjects/json_parser/data/'
 # path = 'd:/Git/Python/json_parser/data'
-path = 'c:/Users/admin/PycharmProjects/json_parser/data'
+
 datamarts_list_file = 'Datamarts - Z_IUSI_WS_DATAMARTS.json'  # список
 matadata_AIRSHINYL00_file = 'Metadata - /BIC/AIRSHINYL00 - z_iusi_ws_metadata.json'  # метаданные витрины AIRSHINYL00
 
-# Список витрин:
-with open(os.path.join(path, datamarts_list_file), 'r') as json_file:
-    json_data = json.load(json_file)
-datamarts = json_data['DATAMARTS']
-
 class Datamart:
-    '''Базовый класс витрины'''
+    """Базовый класс витрины"""
 
+    def __init__(self, path, name):
+        self.path = path
+        self.name = name
+        self.metadata = None
+
+    def get_metadata_as_df(self):
+        """Получение метаданных витрины"""
+        try:
+            with open(os.path.join(self.path, 'data_{}.json'.format(self.name)), 'r') as json_file:
+                data = json.load(json_file)
+            # pprint(data)
+            self.metadata = pd.json_normalize(data['DATA'])
+        except Exception as ex:
+            print('Витрина {0} - исключение при получении метаданных: {}'.format(self.name, ex))
 
 
 # Метаданные витрины '/BIC/AIRSHINYL00' <- УТОЧНИТЬ в URL!!!:
-with open(os.path.join(path, matadata_AIRSHINYL00_file), 'r') as json_file:
-    json_data = json.load(json_file)
-metadata = json_data['METADATA']
+
 
 # Pandas DataFrame:
-df = pd.json_normalize(metadata)
-print(df)
+# df = pd.json_normalize(metadata)
+# print(df)
+#
+# df.to_csv(os.path.join(path, 'metadata.csv'), sep='\t', encoding='utf-8', index=False)
+#
+# # pprint(metadata)
+# fieldnames = [rec['FIELDNAME'] for rec in metadata]
 
-df.to_csv(os.path.join(path, 'metadata.csv'), sep='\t', encoding='utf-8', index=False)
+# Список витрин:
+# with open(os.path.join(path, datamarts_list_file), 'r') as json_file:
+#     json_data = json.load(json_file)
+# datamarts = json_data['DATAMARTS']
 
-# pprint(metadata)
-fieldnames = [rec['FIELDNAME'] for rec in metadata]
+# print('Список витрин:', datamarts)
+# print('Список полей витрины "/BIC/AIRSHINYL00":', fieldnames, len(fieldnames))
 
-print('Список витрин:', datamarts)
-print('Список полей витрины "/BIC/AIRSHINYL00":', fieldnames, len(fieldnames))
+dm1 = Datamart(r'c:/Users/admin/PycharmProjects/json_parser/data/', 'AIRSHINYL00')
+dm1.get_metadata_as_df()
+print(dm1.metadata)
