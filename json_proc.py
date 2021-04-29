@@ -46,7 +46,7 @@ class Datamart:
         self.data = None  # pandas DataFrame
 
     def get_metadata_as_df(self):
-        """Получение DataFrame метаданных витрины"""
+        """Получение фрейма метаданных витрины"""
         try:
             with open(os.path.join(self.path_metadata, 'metadata_{}.json'.format(self.name)),
                       'r',
@@ -59,7 +59,7 @@ class Datamart:
             print('Витрина "{0}" - исключение при получении метаданных: {1}'.format(self.name, ex))
 
     def get_data_as_df(self):
-        """Получение DaraFrame данных витрины """
+        """Получение фрейма данных витрины """
         try:
             with open(os.path.join(self.path_data, 'data_{}.json'.format(self.name)),
                       'r',

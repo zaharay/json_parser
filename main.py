@@ -24,6 +24,7 @@ def main():
     datamarts_list = get_datamarts_list(os.path.join(datamarts_path, datamarts_file))
     print('-'*50, 'Список витрин:', datamarts_list, sep='\n')
 
+    # Экземпляр витрины
     dm1 = Datamart(metadata_path, data_path, 'AIRSHINYL00')
     dm1_metadata = dm1.get_metadata_as_df()
     dm1_data = dm1.get_data_as_df()
