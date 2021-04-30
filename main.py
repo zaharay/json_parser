@@ -20,8 +20,6 @@ def write_csv(filename, data):
         print('Отсутствуют данные для загрузки в файл {}!'.format(filename))
 
 def main():
-    replace(li, data_types)
-    print(li)
 
     # Получение списка витрин:
     datamarts_list = get_datamarts_list(os.path.join(datamarts_path, datamarts_file))
@@ -36,13 +34,11 @@ def main():
 
     # write_csv('metadata_{}.csv'.format(dm1.name), dm1_metadata)
     # write_csv('data_{}.csv'.format(dm1.name), dm1_data)
-    #
-    # pw = PostgresWrapper(db_url)
-    # pw.create_table_from_metadata_df(dm_name, dm1_metadata)
-    # pw.connect()
-    # print(pw.connection)
 
-
+    pw = PostgresWrapper(db_url)
+    pw.connect()
+    print(pw.connection)
+    pw.create_table_from_df(dm_name, dm1_metadata, dm1_data)
 
 if __name__ == "__main__":
     main()

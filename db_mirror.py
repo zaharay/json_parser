@@ -26,10 +26,10 @@ class PostgresWrapper:
         engine = create_engine(self.url, echo=True)
         self.connection = engine.connect()
 
-    def create_table_from_metadata_df(self, name, metadata):
+    def create_table_from_df(self, table_name, df_metadata, df_data):
         try:
-            columns_names = list(metadata['FIELDNAME'])
-            columns_types = list(metadata['INTTYPE'])
+            columns_names = list(df_metadata['FIELDNAME'])
+            columns_types = list(df_metadata['INTTYPE'])
             for idx, val in enumerate(columns_types):
                 if val in list(types_dict.keys()):
                     columns_types[idx] = types_dict[val]
@@ -37,22 +37,22 @@ class PostgresWrapper:
                     print('При создании таблицы "{0}" обнаружен неизвестный тип данных: "{1}"!',
                           'Таблица не создана!', sep='\n')
                     return
-            print(columns_types)
             # primary_key_flags = [True, False, False, False]
             # nullable_flags = [False, False, False, False]
-            #
-            # meta = MetaData()
-            # table = Table(name, meta,
-            #               *(Column(column_name, column_type,
-            #                        primary_key=primary_key_flag,
-            #                        nullable=nullable_flag)
-            #                 for column_name,
-            #                     column_type,
-            #                     primary_key_flag,
-            #                     nullable_flag in zip(columns_names,
-            #                                          columns_types,
-            #                                          primary_key_flags,
-            #                                          nullable_flags)))
+
+            meta = MetaData(bind=self.connection)
+            table = Table(table_name,
+                          meta,
+                          *(Column(column_name, column_type)
+                            for column_name, column_type in zip(columns_names, columns_types)
+                            )
+                          )
+            table.create()
+
+            # df_data.to_sql(table_name,
+            #                self.connection,
+            #                if_exists='append',
+            #                )
 
         except Exception as ex:
             print('Исключение при создании таблицы "{0}" в БД: {1}'.format(self.name, ex))
