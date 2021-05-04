@@ -13,17 +13,8 @@ types_dict = {
     'C': String,    # CHAR, CUKY
     'N': Integer,   # NUMC
     'P': Float,     # CURR
+    'D': DateTime   # DATS
 }
-
-
-def replace_list_by_dict(my_list, my_dict):
-    for idx, val in enumerate(my_list):
-        if val in list(my_dict.keys()):
-            my_list[idx] = my_dict[val]
-        else:
-            print('Err!')
-    return my_list
-
 
 class PostgresWrapper:
     """
@@ -38,8 +29,15 @@ class PostgresWrapper:
         self.connection = None
 
     def connect(self):
-        self.engine = create_engine(self.url, echo=True)
+        self.engine = create_engine(self.url)  #, echo=True)
         self.connection = self.engine.connect()
+
+    def delete_table(self, table):
+        try:
+            table.drop(self.engine)
+            print('-' * 50, 'Таблица "{0}" удалена!'.format(table.name), sep='\n')
+        except Exception as ex:
+            print('-' * 50, 'Исключение при удалении таблицы "{0}": {1}'.format(table.name, ex), sep='\n')
 
     def create_table_from_df(self, table_name, df_metadata, df_data):
         try:
@@ -50,7 +48,7 @@ class PostgresWrapper:
                     columns_types[idx] = types_dict[val]
                 else:
                     print('-'*50,
-                          'При создании таблицы "{0}" обнаружен неизвестный тип данных: "{1}"!',
+                          'При создании таблицы "{0}" обнаружен неизвестный тип данных: "{1}"!'.format(table_name, val),
                           'Таблица не создана!', sep='\n')
                     return
             # primary_key_flags = [True, False, False, False]
@@ -66,12 +64,7 @@ class PostgresWrapper:
 
             if self.engine.has_table(table_name):
                 print('-'*50, 'Таблица "{0}" уже существует в: "{1}"!'.format(table_name, self.engine), sep='\n')
-                try:
-                    table.drop(self.engine)
-                    print('-' * 50, 'Таблица "{0}" удалена!'.format(table_name), sep='\n')
-                except Exception as ex:
-                    print('-'*50,
-                          'Исключение при удалении таблицы "{0}": {1}'.format(table_name, ex), sep='\n')
+                self.delete_table(table)
 
             table.create()
             print('-' * 50, 'Таблица "{0}" создана!'.format(table_name), sep='\n')

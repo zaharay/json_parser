@@ -1,6 +1,7 @@
 import os
 from json_proc import Datamart, get_datamarts_list
 from db_mirror import PostgresWrapper
+from other import write_csv
 
 # path = r'c:/Users/admin/PycharmProjects/json_parser/data/'
 path = r'd:/Git/Python/json_parser/data/'
@@ -10,36 +11,35 @@ metadata_path = path
 data_path = path
 db_url = 'postgresql://postgres:zahar@localhost:5432/mirror'
 
-def write_csv(filename, data):
-    """Запись данных в CSV-файл"""
-    if data is not None:
-        data.to_csv(filename, sep='\t', encoding='utf-8', index=False)
-        # data.to_excel(filename, sheet_name='Sheet1', index=False)
-        print('Данные загружены в файл "{}"'.format(filename))
-    else:
-        print('Отсутствуют данные для загрузки в файл {}!'.format(filename))
 
 def main():
 
-    # Получение списка витрин:
-    datamarts_list = get_datamarts_list(os.path.join(datamarts_path, datamarts_file))
+    # Получение списка наименований витрин:
+    dm_names_list = get_datamarts_list(os.path.join(datamarts_path, datamarts_file))
     print(os.path.join(datamarts_path, datamarts_file))
-    print('-'*50, 'Список витрин:', datamarts_list, sep='\n')
-
-    dm_name = datamarts_list[0].split('/')[-1]  # последняя часть наименования, после разделения по '/'
-
-    # Экземпляр витрины
-    dm1 = Datamart(metadata_path, data_path, dm_name)
-    dm1_metadata = dm1.get_metadata_as_df()
-    dm1_data = dm1.get_data_as_df()
-
-    # write_csv('metadata_{}.csv'.format(dm1.name), dm1_metadata)
-    # write_csv('data_{}.csv'.format(dm1.name), dm1_data)
+    print('-'*50, 'Наименования витрин:', dm_names_list, sep='\n')
 
     pw = PostgresWrapper(db_url)
     pw.connect()
-    pw.create_table_from_df(dm_name, dm1_metadata, dm1_data)
+
+    for dm_name in dm_names_list:
+        dm_name = dm_name.split('/')[-1]  # последняя часть наименования, после разделения по '/'
+        # Экземпляр класса витрины:
+        dm = Datamart(metadata_path, data_path, dm_name)
+        dm_metadata = dm.get_metadata_as_df()
+        dm_data = dm.get_data_as_df()
+
+        # Запись таблиц метаданных и данных в отдельные CSV-файлы
+        # if dm_name == 'AIRSHINYD00':
+        #     write_csv('metadata_{}.csv'.format(dm_name), dm_metadata)
+        #     write_csv('data_{}.csv'.format(dm_name), dm_data)
+        #     print('-'*50, 'CSV-файлы созданы!', sep='\n')
+
+        # Создание таблицы витрины (с заменой!!!)  в БД:
+        pw.create_table_from_df(dm_name, dm_metadata, dm_data)
+
     pw.close()
+
 
 if __name__ == "__main__":
     main()
