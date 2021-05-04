@@ -2,12 +2,12 @@ import os
 from json_proc import Datamart, get_datamarts_list
 from db_mirror import PostgresWrapper
 
-# path = 'c:/Users/admin/PycharmProjects/json_parser/data/'
-# path = 'd:/Git/Python/json_parser/data'
-datamarts_path = r'c:/Users/admin/PycharmProjects/json_parser/data/'
+# path = r'c:/Users/admin/PycharmProjects/json_parser/data/'
+path = r'd:/Git/Python/json_parser/data/'
+datamarts_path = path  #
 datamarts_file = r'datamarts.json'
-metadata_path = r'c:/Users/admin/PycharmProjects/json_parser/data/'
-data_path = r'c:/Users/admin/PycharmProjects/json_parser/data/'
+metadata_path = path
+data_path = path
 db_url = 'postgresql://postgres:zahar@localhost:5432/mirror'
 
 def write_csv(filename, data):
@@ -23,9 +23,10 @@ def main():
 
     # Получение списка витрин:
     datamarts_list = get_datamarts_list(os.path.join(datamarts_path, datamarts_file))
+    print(os.path.join(datamarts_path, datamarts_file))
     print('-'*50, 'Список витрин:', datamarts_list, sep='\n')
 
-    dm_name = datamarts_list[0].split('/')[-1]
+    dm_name = datamarts_list[0].split('/')[-1]  # последняя часть наименования, после разделения по '/'
 
     # Экземпляр витрины
     dm1 = Datamart(metadata_path, data_path, dm_name)
@@ -37,8 +38,8 @@ def main():
 
     pw = PostgresWrapper(db_url)
     pw.connect()
-    print(pw.connection)
     pw.create_table_from_df(dm_name, dm1_metadata, dm1_data)
+    pw.close()
 
 if __name__ == "__main__":
     main()
