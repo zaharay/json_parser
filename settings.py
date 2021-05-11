@@ -13,6 +13,7 @@ class MegaHandler(logging.Handler):
     def emit(self, record):
         message = self.format(record)
         with open(self.filename, 'a') as file:
+            file.write('-'*70 + '\n')
             file.write(message + '\n')
 
 

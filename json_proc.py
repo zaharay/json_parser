@@ -35,7 +35,7 @@ def get_datamarts_list(datamarts_path):
             json_data = json.load(json_file)
         return json_data['DATAMARTS']
     except Exception as ex:
-        logger.debug('Исключение при получении списка витрин: {}'.format(ex))
+        logger.exception(ex)
 
 
 class Datamart:
@@ -59,7 +59,7 @@ class Datamart:
             self.metadata = pd.json_normalize(data['METADATA'])
             return self.metadata
         except Exception as ex:
-            print('Витрина "{0}" - исключение при получении метаданных: {1}'.format(self.name, ex))
+            logger.debug('Витрина "{0}" - исключение при получении метаданных: {1}'.format(self.name, ex))
 
     def get_data_as_df(self):
         """Получение фрейма данных витрины """

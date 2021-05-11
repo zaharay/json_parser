@@ -9,8 +9,6 @@ from other import write_csv
 logging.config.dictConfig(logger_config)
 logger = logging.getLogger('app_logger')
 
-logger.debug('Hello World!')
-
 
 path = r'c:/Users/admin/PycharmProjects/json_parser/data/'
 # path = r'd:/Git/Python/json_parser/data/'
@@ -22,7 +20,6 @@ db_url = 'postgresql://postgres:zahar@localhost:5432/mirror'
 
 
 def main():
-
     # Получение списка наименований витрин:
     dm_names_list = get_datamarts_list(os.path.join(datamarts_path, datamarts_file))
     print(os.path.join(datamarts_path, datamarts_file))
