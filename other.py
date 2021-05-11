@@ -1,4 +1,5 @@
-import pandas as pd
+# import pandas as pd
+
 
 def write_csv(filename, data):
     """Запись данных в CSV-файл"""
@@ -8,6 +9,7 @@ def write_csv(filename, data):
         print('Данные загружены в файл "{}"'.format(filename))
     else:
         print('Отсутствуют данные для загрузки в файл {}!'.format(filename))
+
 
 def replace_list_by_dict(my_list, my_dict):
     """

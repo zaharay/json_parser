@@ -12,6 +12,8 @@ https://stackoverflow.com/questions/33282067/read-json-response-in-python
 import os
 import json
 import pandas as pd
+from settings import logger_config
+import logging.config
 # import requests
 # import urllib.parse
 
@@ -24,6 +26,7 @@ import pandas as pd
 # json_status = json_data['status']
 # print(json_status)
 
+logger = logging.getLogger('app_logger')
 
 def get_datamarts_list(datamarts_path):
     """Получение списка витрин"""
@@ -32,7 +35,7 @@ def get_datamarts_list(datamarts_path):
             json_data = json.load(json_file)
         return json_data['DATAMARTS']
     except Exception as ex:
-        print('Исключение при получении списка витрин: {}'.format(ex))
+        logger.debug('Исключение при получении списка витрин: {}'.format(ex))
 
 
 class Datamart:
