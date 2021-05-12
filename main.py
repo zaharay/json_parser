@@ -7,6 +7,7 @@ from other import write_csv
 
 
 logging.config.dictConfig(logger_config)
+s_logger = logging.getLogger('simple_logger')
 logger = logging.getLogger('app_logger')
 
 
@@ -20,14 +21,16 @@ db_url = 'postgresql://postgres:zahar@localhost:5432/mirror'
 
 
 def main():
+    s_logger.debug('Cтарт')
+
     # Получение списка наименований витрин:
     dm_names_list = get_datamarts_list(os.path.join(datamarts_path, datamarts_file))
-    print(os.path.join(datamarts_path, datamarts_file))
-    print('-'*50, 'Наименования витрин:', dm_names_list, sep='\n')
+    # print(os.path.join(datamarts_path, datamarts_file))
+    # print('-'*50, 'Наименования витрин:', dm_names_list, sep='\n')
 
-    # pw = PostgresWrapper(db_url)
-    # pw.connect()
-    #
+    pw = PostgresWrapper(db_url)
+    pw.connect()
+    print(pw)
     # for dm_name in dm_names_list:
     #     dm_name = dm_name.split('/')[-1]  # последняя часть наименования, после разделения по '/'
     #     # Экземпляр класса витрины:
@@ -45,7 +48,7 @@ def main():
     #     pw.create_table_from_df(dm_name, dm_metadata, dm_data)
     #
     # pw.close()
-
+    s_logger.debug('Cтоп')
 
 if __name__ == "__main__":
     main()

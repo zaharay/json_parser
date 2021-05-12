@@ -7,6 +7,7 @@ https://pythonru.com/biblioteki/shemy-sqlalchemy-core
 
 # (venv)>pip install SQLAlchemy
 # (venv)>pip install psycopg2
+import logging.config
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer, Float, String, DateTime, delete
 
 types_dict = {
@@ -15,6 +16,8 @@ types_dict = {
     'P': Float,     # CURR
     'D': DateTime   # DATS
 }
+
+logger = logging.getLogger('app_logger')
 
 class PostgresWrapper:
     """
@@ -35,9 +38,9 @@ class PostgresWrapper:
     def delete_table(self, table):
         try:
             table.drop(self.engine)
-            print('-' * 50, 'Таблица "{0}" удалена!'.format(table.name), sep='\n')
+            logger.debug('Таблица "{0}" удалена!'.format(table.name), sep='\n')
         except Exception as ex:
-            print('-' * 50, 'Исключение при удалении таблицы "{0}": {1}'.format(table.name, ex), sep='\n')
+            logger.debug('Исключение при удалении таблицы "{0}": {1}'.format(table.name, ex), sep='\n')
 
     def create_table_from_df(self, table_name, df_metadata, df_data):
         try:
@@ -47,7 +50,7 @@ class PostgresWrapper:
                 if val in list(types_dict.keys()):
                     columns_types[idx] = types_dict[val]
                 else:
-                    print('-'*50,
+                    logger.debug(
                           'При создании таблицы "{0}" обнаружен неизвестный тип данных: "{1}"!'.format(table_name, val),
                           'Таблица не создана!', sep='\n')
                     return
@@ -63,11 +66,11 @@ class PostgresWrapper:
                           )
 
             if self.engine.has_table(table_name):
-                print('-'*50, 'Таблица "{0}" уже существует в: "{1}"!'.format(table_name, self.engine), sep='\n')
+                logger.debug('Таблица "{0}" уже существует в: "{1}"!'.format(table_name, self.engine), sep='\n')
                 self.delete_table(table)
 
             table.create()
-            print('-' * 50, 'Таблица "{0}" создана!'.format(table_name), sep='\n')
+            logger.debug('Таблица "{0}" создана!'.format(table_name), sep='\n')
 
             df_data.to_sql(name=table_name,
                            con=self.connection,
@@ -76,7 +79,7 @@ class PostgresWrapper:
                            )
 
         except Exception as ex:
-            print('-'*50, 'Исключение при создании таблицы "{0}": {1}'.format(table_name, ex), sep='\n')
+            logger.debug('Исключение при создании таблицы "{0}": {1}'.format(table_name, ex), sep='\n')
 
     def close(self):
         if self.connection is not None:

@@ -1,4 +1,10 @@
 """
+REST API: что это простыми словами: принципы, стандарты, описание:
+https://boodet.online/reastapi
+
+Requests в Python – Примеры выполнения HTTP запросов:
+https://python-scripts.com/requests
+
 How to write a simple Postgres JSON wrapper with Python:
 https://levelup.gitconnected.com/how-to-write-a-simple-postgres-json-wrapper-with-python-ef09572daa66
 
@@ -14,7 +20,7 @@ import json
 import pandas as pd
 from settings import logger_config
 import logging.config
-# import requests
+import requests
 # import urllib.parse
 
 # main_api = 'http://maps.googleapis.com/maps/api/geocode/json?'
@@ -59,7 +65,7 @@ class Datamart:
             self.metadata = pd.json_normalize(data['METADATA'])
             return self.metadata
         except Exception as ex:
-            logger.debug('Витрина "{0}" - исключение при получении метаданных: {1}'.format(self.name, ex))
+            logger.debug('\nВитрина "{0}" - исключение при получении метаданных: {1}'.format(self.name, ex))
 
     def get_data_as_df(self):
         """Получение фрейма данных витрины """
@@ -71,4 +77,4 @@ class Datamart:
             self.data = pd.json_normalize(data['DATA'])
             return self.data
         except Exception as ex:
-            print('Витрина "{0}" - исключение при получении данных: {1}'.format(self.name, ex))
+            logger.debug('Витрина "{0}" - исключение при получении данных: {1}'.format(self.name, ex))
