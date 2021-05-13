@@ -1,9 +1,10 @@
 import os
+import argparse
 from settings import logger_config
 import logging.config
 from json_proc import Datamart, get_datamarts_list
 from db_mirror import PostgresWrapper
-from utils import write_csv
+from utils import config_parser
 
 
 logging.config.dictConfig(logger_config)
@@ -28,9 +29,9 @@ def main():
     # print(os.path.join(datamarts_path, datamarts_file))
     # print('-'*50, 'Наименования витрин:', dm_names_list, sep='\n')
 
-    pw = PostgresWrapper(db_url)
-    pw.connect()
-    print(pw)
+    # pw = PostgresWrapper(db_url)
+    # pw.connect()
+    # print(pw)
     # for dm_name in dm_names_list:
     #     dm_name = dm_name.split('/')[-1]  # последняя часть наименования, после разделения по '/'
     #     # Экземпляр класса витрины:
@@ -50,5 +51,11 @@ def main():
     # pw.close()
     s_logger.debug('Cтоп')
 
+
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--config', type=str, dest='config')
+    args = parser.parse_args()
+    config = config_parser(args.config)
+    print(config)
     main()

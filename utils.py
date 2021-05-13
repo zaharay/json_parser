@@ -1,14 +1,40 @@
-# import pandas as pd
+import pandas as pd
+
+
+def config_parser(config_path):
+    """
+    Парсер файла конфигурации
+    :param config_path: путь к файлу конфигурации
+    :return: словарь с URL-адресами ресурсов (списка витрин, метаданных витрин, данных)
+
+    """
+    with open(config_path, 'r') as file:
+        config = dict()
+        lines = file.readlines()
+        for line in lines:
+            k, v = line.split(' - ')
+            config[k] = v
+        return config
 
 
 def write_csv(filename, data):
-    """Запись данных в CSV-файл"""
-    if data is not None:
+    """
+    Запись данных в CSV-файл
+    :param filename: файл для записи
+    :param data: данные (pandas DataFrame) для
+    :return: 0 - ок, 1 - несоответствие типа данных, 2 - данные отсутствуют
+    """
+    if not isinstance(data, pd.DataFrame):
+        print('Тип данных не соответствует pandas.DataFrame!')
+        return 1
+    elif data is None:
+        print('Отсутствуют данные для загрузки в файл "{}"!'.format(filename))
+        return 2
+    else:
         data.to_csv(filename, sep='\t', encoding='utf-8', index=False)
         # data.to_excel(filename, sheet_name='Sheet1', index=False)
         print('Данные загружены в файл "{}"'.format(filename))
-    else:
-        print('Отсутствуют данные для загрузки в файл {}!'.format(filename))
+        return 0
 
 
 def replace_list_by_dict(my_list, my_dict):
@@ -24,3 +50,4 @@ def replace_list_by_dict(my_list, my_dict):
         else:
             print('Err!')
     return my_list
+
