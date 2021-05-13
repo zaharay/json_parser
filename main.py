@@ -3,7 +3,7 @@ from settings import logger_config
 import logging.config
 from json_proc import Datamart, get_datamarts_list
 from db_mirror import PostgresWrapper
-from other import write_csv
+from utils import write_csv
 
 
 logging.config.dictConfig(logger_config)
