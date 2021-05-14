@@ -1,20 +1,27 @@
 import pandas as pd
+import configparser
 
-
-def config_parser(config_path):
+def config_parser(file_path, section='host'):
     """
     Парсер файла конфигурации
     :param config_path: путь к файлу конфигурации
     :return: словарь с URL-адресами ресурсов (списка витрин, метаданных витрин, данных)
 
     """
-    with open(config_path, 'r') as file:
-        config = dict()
-        lines = file.readlines()
-        for line in lines:
-            k, v = line.split(' - ')
-            config[k] = v
-        return config
+    # with open(file_path, 'r') as file:
+    #     config = dict()
+    #     lines = file.readlines()
+    #     for line in lines:
+    #         k, v = line.split(' = ')
+    #         config[k] = v
+    #     return config
+
+    config = configparser.ConfigParser()
+    config.read(file_path)
+    result = dict()
+    for key in config[section]:
+        result[key] = config[section][key]
+    return result
 
 
 def write_csv(filename, data):

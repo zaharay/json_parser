@@ -1,33 +1,38 @@
 import os
 import argparse
 from settings import logger_config
+from utils import config_parser
 import logging.config
 from json_proc import Datamart, get_datamarts_list
 from db_mirror import PostgresWrapper
-from utils import config_parser
 
+
+# Локализация (константа):
+LOCATION = 'work_localhost'  # 'host'  # 'home_localhost'
 
 logging.config.dictConfig(logger_config)
 s_logger = logging.getLogger('simple_logger')
 logger = logging.getLogger('app_logger')
 
 
-path = r'c:/Users/admin/PycharmProjects/json_parser/data/'
-# path = r'd:/Git/Python/json_parser/data/'
-datamarts_path = path  #
-datamarts_file = r'datamart.json'
-metadata_path = path
-data_path = path
-db_url = 'postgresql://postgres:zahar@localhost:5432/mirror'
-
-
 def main():
     s_logger.debug('Cтарт')
 
+    datamarts_path = ''
+    metadata_path = ''
+    data_path = ''
+    config = config_parser(args.config, section=LOCATION)
+    if LOCATION is 'work_localhost':
+        datamarts_file = r'datamarts.json'
+        datamarts_path = config['path']
+        datamarts_path = os.path.join(datamarts_path, datamarts_file)
+
+
+    db_url = 'postgresql://postgres:zahar@localhost:5432/mirror'
+
     # Получение списка наименований витрин:
-    dm_names_list = get_datamarts_list(os.path.join(datamarts_path, datamarts_file))
-    # print(os.path.join(datamarts_path, datamarts_file))
-    # print('-'*50, 'Наименования витрин:', dm_names_list, sep='\n')
+    dm_names_list = get_datamarts_list(datamarts_path)
+    print('-'*50, 'Наименования витрин:', dm_names_list, sep='\n')
 
     # pw = PostgresWrapper(db_url)
     # pw.connect()
@@ -54,8 +59,12 @@ def main():
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--config', type=str, dest='config')
+    parser.add_argument('--config',
+                        type=str,
+                        help='path to configuration file',
+                        default='./config.txt',  # os.path.realpath('config.txt'),
+                        dest='config'
+                        )
     args = parser.parse_args()
-    config = config_parser(args.config)
-    print(config)
+
     main()
