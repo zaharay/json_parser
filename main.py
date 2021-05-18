@@ -7,33 +7,53 @@ from json_proc import Datamart, get_datamarts_list
 from db_mirror import PostgresWrapper
 
 
-# Локализация (константа):
-LOCATION = 'work_localhost'  # 'host'  # 'home_localhost'
+# Локализация (константа) - источник данных:
+LOCATION = 'work_localhost'  # 'work_localhost' 'host' 'home_localhost'
 
 logging.config.dictConfig(logger_config)
-s_logger = logging.getLogger('simple_logger')
-logger = logging.getLogger('app_logger')
+s_logger = logging.getLogger('simple_logger')  # логгер для старта и стопа
+logger = logging.getLogger('app_logger')  # основной логгер
 
 
 def main():
-    s_logger.debug('Cтарт')
-
     datamarts_path = ''
     metadata_path = ''
     data_path = ''
     config = config_parser(args.config, section=LOCATION)
-    if LOCATION is 'work_localhost':
+    if LOCATION is 'work_localhost' or LOCATION is 'home_localhost':
         datamarts_file = r'datamarts.json'
         datamarts_path = config['path']
+        metadata_path = datamarts_path
+        data_path = datamarts_path
         datamarts_path = os.path.join(datamarts_path, datamarts_file)
+    elif LOCATION is 'host':
+        datamarts_path = config['datamarts_url']
+        metadata_path = config['metadata_url']
+        data_path = config['data_url']
 
-
-    db_url = 'postgresql://postgres:zahar@localhost:5432/mirror'
+    logger.debug('\nКонфигурация:\n\tdatamarts_path={0}\n\tmetadata_path={1}\n\tdata_path={2}'.format(
+        datamarts_path, metadata_path, data_path))
 
     # Получение списка наименований витрин:
     dm_names_list = get_datamarts_list(datamarts_path)
-    print('-'*50, 'Наименования витрин:', dm_names_list, sep='\n')
+    logger.debug('\nНаименования витрин:\n\t{}'.format(dm_names_list))
 
+    # Получение URL БД:
+    # db_url_example = 'postgresql://postgres:zahar@localhost:5432/mirror'
+    database = config['database']
+    username = config['username']
+    password = config['password']
+    host = config['host']
+    port = config['port']
+    db_url = ('postgresql://{0}:{1}@{2}:{3}/{4}'.format(
+        username,
+        password,
+        host,
+        port,
+        database
+    ))
+
+    print(db_url, sep='\n')
     # pw = PostgresWrapper(db_url)
     # pw.connect()
     # print(pw)
@@ -54,10 +74,11 @@ def main():
     #     pw.create_table_from_df(dm_name, dm_metadata, dm_data)
     #
     # pw.close()
-    s_logger.debug('Cтоп')
 
 
 if __name__ == "__main__":
+    s_logger.debug('Cтарт')
+
     parser = argparse.ArgumentParser()
     parser.add_argument('--config',
                         type=str,
@@ -68,3 +89,5 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     main()
+
+    s_logger.debug('Cтоп')
