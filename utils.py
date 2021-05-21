@@ -15,7 +15,6 @@ def config_parser(file_path, section='host'):
     #         k, v = line.split(' = ')
     #         config[k] = v
     #     return config
-
     config = configparser.ConfigParser()
     config.read(file_path)
     result = dict()

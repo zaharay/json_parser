@@ -29,7 +29,8 @@ logger_config = {
             'datefmt': '%d-%m-%Y %H:%M:%S'
         },
         'std_format': {  # для остальных сообщений
-            'format': '{asctime}.{msecs:0<3.0f} - {levelname} - {name} - {module}:{funcName}:{lineno} - {message}',
+            # 'format': '{asctime}.{msecs:0<3.0f} - {levelname} - {name} - {module}:{funcName}:{lineno} - {message}',
+            'format': '{asctime}.{msecs:0<3.0f} - {levelname} - {module}:{funcName}:{lineno} - {message}',
             'style': '{',
             'datefmt': '%d-%m-%Y %H:%M:%S'
         }
