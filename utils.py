@@ -1,3 +1,12 @@
+"""
+utils.py
+Модуль вспомогательных инструментов:
+ * config_parser() - парсер файла конфигурации
+ * write_csv() - запись фрейма данных в csv-файл
+ * replace_list_by_dict() - замена элементов списка значениями из словаря (по ключу)
+"""
+
+
 import pandas as pd
 import configparser
 

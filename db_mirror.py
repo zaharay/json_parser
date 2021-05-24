@@ -1,8 +1,6 @@
 """
-Создание схемы базы данных в SQLAlchemy Core
-https://pythonru.com/biblioteki/shemy-sqlalchemy-core
-
-
+db_mirror.py
+Модуль для работы с БД PostgreSQL
 """
 
 # (venv)>pip install SQLAlchemy
