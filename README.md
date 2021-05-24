@@ -16,7 +16,7 @@
 ## Полезные ссылки (по разделам):
 *   [REST API, Requests, JSON response](#requests)
 *   [SQL, SQLAlchemy](#db)
-
+*   [Версия интерпретатора Python перечень используемых модулей](#python)
 
 #### REST API, Requests, JSON response:<a name="request"></a>
 *   [REST API: что это простыми словами: принципы, стандарты, описание](https://boodet.online/reastapi)
@@ -28,4 +28,8 @@
 #### SQL, SQLAlchemy:<a name="db"></a>
 *   [Создание схемы базы данных в SQLAlchemy Core](https://pythonru.com/biblioteki/shemy-sqlalchemy-core)
 *   
+
+#### Версия интерпретатора Python перечень используемых модулей:<a name="python"></a>
+*   
+
 
