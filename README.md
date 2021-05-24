@@ -30,6 +30,17 @@
 *   
 
 #### Версия интерпретатора Python и перечень используемых модулей:<a name="python"></a>
+*   Версия Python - Python 3.5.3
+*   pytz - v. 2021.1
+*   numpy - v. 1.18.5
+*   python-dateutil - v. 2.8.1
+*   six - v. 1.15.0
+*   pandas - v. 0.25.3
+*   chardet - v. 4.0.0
+*   urllib3 - v. 1.26.4
+*   idna - v. 
+*   psycopg2 - v. 2.8.6
+*   
 *   
 
 
