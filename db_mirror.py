@@ -7,6 +7,7 @@ db_mirror.py
 # (venv)>pip install psycopg2
 import logging.config
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer, Float, String, DateTime, delete
+from sqlalchemy.schema import PrimaryKeyConstraint
 
 types_dict = {
     'C': String,    # CHAR, CUKY
@@ -48,7 +49,7 @@ class PostgresWrapper:
                 if val in list(types_dict.keys()):
                     columns_types[idx] = types_dict[val]
                 else:
-                    logger.debug(
+                    logger.error(
                           'При создании таблицы "{0}" обнаружен неизвестный тип данных: "{1}"!'.format(table_name, val),
                           'Таблица не создана!', sep='\n')
                     return
@@ -61,14 +62,16 @@ class PostgresWrapper:
                           *(Column(column_name, column_type)
                             for column_name, column_type in zip(columns_names, columns_types)
                             ),
+                          PrimaryKeyConstraint(*(Column(column_name) for column_name in columns_names),
+                                               name=table_name+'_pk')
                           )
 
             if self.engine.has_table(table_name):
-                logger.debug('Таблица "{0}" уже существует в: "{1}"!'.format(table_name, self.engine), sep='\n')
-                self.delete_table(table)
+                logger.debug('Таблица "{0}" уже существует в: "{1}"!'.format(table_name, self.engine))
+                # self.delete_table(table)
 
             table.create()
-            logger.debug('Таблица "{0}" создана!'.format(table_name), sep='\n')
+            logger.debug('Таблица "{0}" создана!'.format(table_name))
 
             df_data.to_sql(name=table_name,
                            con=self.connection,
@@ -77,7 +80,7 @@ class PostgresWrapper:
                            )
 
         except Exception as ex:
-            logger.debug('Исключение при создании таблицы "{0}": {1}'.format(table_name, ex), sep='\n')
+            logger.error('Исключение при создании таблицы "{0}": {1}'.format(table_name, ex))
 
     def close(self):
         if self.connection is not None:
