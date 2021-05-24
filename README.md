@@ -2,7 +2,7 @@
 
 
 ## Полезные ссылки (по разделам)
-[REST API, Requests](#requests)
+*   [REST API, Requests](#requests)
 
 
 
