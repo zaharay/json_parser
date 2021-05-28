@@ -89,10 +89,10 @@ class PostgresWrapper:
                     table_name,
                     self.engine)))
 
-                if not table_name == 'AIRFINAN00':
-                    # AIRSHINYD00 - data oracle
-                    # AIRFINAN00 - double oracle
-                    return
+                # if not table_name == 'AIRFINAN00':
+                #     # AIRSHINYD00 - data oracle
+                #     # AIRFINAN00 - double oracle
+                #     return
 
                 columns_names = list(df_metadata['FIELDNAME'])
                 columns_types = list(df_metadata['INTTYPE'])
