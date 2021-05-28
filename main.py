@@ -37,13 +37,15 @@ def main():
         dm_name = dm_name.split('/')[-1]  # последняя часть наименования, после разделения по '/'
         # Экземпляр класса витрины:
         # Запись таблиц метаданных и данных в отдельные CSV-файлы
-        if dm_name == 'AIRFINAN00':
+        if dm_name == 'AIRSHINYD00':
             # write_csv('metadata_{}.csv'.format(dm_name), dm_metadata)
             # write_csv('data_{}.csv'.format(dm_name), dm_data)
             # print('-'*50, 'CSV-файлы созданы!', sep='\n')
             dm = Datamart(metadata_path, data_path, dm_name)
             # dm_metadata = dm.get_metadata_as_df()
             # dm_data = dm.get_data_as_df()
+            print(dm.metadata, dm.data)
+
 
 
 

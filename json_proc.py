@@ -70,11 +70,25 @@ class Datamart:
         self.data = self.get_data_as_df()  # pandas DataFrame
 
     def fields_format_conversion(self):
+        print(self.data.shape)
         # Поля со значениями типа Float ('INTTYPE' == 'P')
-        float_data_fieldnames = self.metadata[self.metadata['INTTYPE'] == 'P']['FIELDNAME']
-        if len(float_data_fieldnames) > 0:
-            print(float_data_fieldnames)
-            print(self.data[float_data_fieldnames])
+        float_fieldnames = self.metadata[self.metadata['INTTYPE'] == 'P']['FIELDNAME']
+        if len(float_fieldnames) > 0:
+            for fieldname in float_fieldnames:
+                # Перенос '-' с последней позиции строкового значения на первую
+                self.data[fieldname] = self.data[fieldname].apply(
+                    lambda x: '-' + x.replace(r'-', '') if x[-1] == '-' else x)
+                self.data[fieldname] = self.data[fieldname].astype('float64')
+
+        # Поля со значениями типа Date ('INTTYPE' == 'D')
+        date_fieldnames = self.metadata[self.metadata['INTTYPE'] == 'D']['FIELDNAME']
+        if len(date_fieldnames) > 0:
+            for fieldname in date_fieldnames:
+                self.data[fieldname] = pd.to_datetime(self.data[fieldname], errors='coerce')
+                err_date = self.data[self.data[fieldname].isnull()].replace(pd.NaT, '')
+                logger.debug('\nВитрина "{0}" - Ошибка формата даты на строках: {1}'.format(self.name, err_date.index.to_list()))
+
+        return self.data
 
     def get_metadata_as_df(self):
         """Получение фрейма метаданных витрины"""
@@ -96,7 +110,7 @@ class Datamart:
                       encoding='utf-8') as json_file:
                 data = json.load(json_file)
             self.data = pd.json_normalize(data['DATA'])
-            self.df_format_conversion()
+            self.data = self.fields_format_conversion()
             return self.data
         except Exception as ex:
             logger.debug('Витрина "{0}" - исключение при получении данных: {1}'.format(self.name, ex))
