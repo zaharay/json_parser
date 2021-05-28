@@ -24,40 +24,35 @@ def main():
 
     # Получение URL БД:
     # db_url_example = 'postgresql://postgres:zahar@localhost:5432/mirror'
-    database = config['database']
+    db_name = config['database']
     username = config['username']
     password = config['password']
     host = config['host']
     port = config['port']
-    db_url = ('postgresql://{0}:{1}@{2}:{3}/{4}'.format(
-        username,
-        password,
-        host,
-        port,
-        database
-    ))
 
-    print(db_url, sep='\n')
-    pw = PostgresWrapper(db_url)
-    pw.connect()
-    print(pw)
+    # pw = PostgresWrapper(host, port, username, password, db_name)
+    # print(pw)
+
     for dm_name in dm_names_list:
         dm_name = dm_name.split('/')[-1]  # последняя часть наименования, после разделения по '/'
         # Экземпляр класса витрины:
-        dm = Datamart(metadata_path, data_path, dm_name)
-        dm_metadata = dm.get_metadata_as_df()
-        dm_data = dm.get_data_as_df()
-
         # Запись таблиц метаданных и данных в отдельные CSV-файлы
-        # if dm_name == 'AIRSHINYD00':
-        #     write_csv('metadata_{}.csv'.format(dm_name), dm_metadata)
-        #     write_csv('data_{}.csv'.format(dm_name), dm_data)
-        #     print('-'*50, 'CSV-файлы созданы!', sep='\n')
+        if dm_name == 'AIRFINAN00':
+            # write_csv('metadata_{}.csv'.format(dm_name), dm_metadata)
+            # write_csv('data_{}.csv'.format(dm_name), dm_data)
+            # print('-'*50, 'CSV-файлы созданы!', sep='\n')
+            dm = Datamart(metadata_path, data_path, dm_name)
+            # dm_metadata = dm.get_metadata_as_df()
+            # dm_data = dm.get_data_as_df()
+
+
+
+
 
         # Создание таблицы витрины (с заменой!!!)  в БД:
-        pw.create_table_from_df(dm_name, dm_metadata, dm_data)
+        # pw.create_table_from_df(dm_name, dm_metadata, dm_data)
 
-    pw.close()
+    # pw.close()
 
 
 if __name__ == "__main__":

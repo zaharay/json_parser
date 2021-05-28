@@ -66,8 +66,15 @@ class Datamart:
         self.path_metadata = path_metadata
         self.path_data = path_data
         self.name = name
-        self.metadata = None  # pandas DataFrame
-        self.data = None  # pandas DataFrame
+        self.metadata = self.get_metadata_as_df()  # pandas DataFrame
+        self.data = self.get_data_as_df()  # pandas DataFrame
+
+    def fields_format_conversion(self):
+        # Поля со значениями типа Float ('INTTYPE' == 'P')
+        float_data_fieldnames = self.metadata[self.metadata['INTTYPE'] == 'P']['FIELDNAME']
+        if len(float_data_fieldnames) > 0:
+            print(float_data_fieldnames)
+            print(self.data[float_data_fieldnames])
 
     def get_metadata_as_df(self):
         """Получение фрейма метаданных витрины"""
@@ -76,7 +83,6 @@ class Datamart:
                       'r',
                       encoding='utf-8') as json_file:
                 data = json.load(json_file)
-            # pprint(data)
             self.metadata = pd.json_normalize(data['METADATA'])
             return self.metadata
         except Exception as ex:
@@ -90,6 +96,8 @@ class Datamart:
                       encoding='utf-8') as json_file:
                 data = json.load(json_file)
             self.data = pd.json_normalize(data['DATA'])
+            self.df_format_conversion()
             return self.data
         except Exception as ex:
             logger.debug('Витрина "{0}" - исключение при получении данных: {1}'.format(self.name, ex))
+
