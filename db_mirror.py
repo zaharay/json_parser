@@ -9,7 +9,7 @@ import logging.config
 
 import sqlalchemy
 # from sqlalchemy.orm import sessionmaker
-from sqlalchemy import create_engine, MetaData, Table, Column, Integer, Float, String, Date, delete
+from sqlalchemy import create_engine, MetaData, Table, Column, Integer, Float, String, Date, delete, inspect
 from sqlalchemy.schema import PrimaryKeyConstraint
 
 types_dict = {
@@ -83,6 +83,8 @@ class PostgresWrapper:
 
     def create_table_from_df(self, table_name, df_metadata, df_data):
         try:
+            columns_names = list(df_metadata['FIELDNAME'])
+            columns_types = list(df_metadata['INTTYPE'])
             if not self.engine.has_table(table_name):
                 # self.delete_table(table)
                 logger.debug(logger.debug('Таблица "{0}" не найдена в: "{1}"!'.format(
@@ -93,9 +95,6 @@ class PostgresWrapper:
                 #     # AIRSHINYD00 - data oracle
                 #     # AIRFINAN00 - double oracle
                 #     return
-
-                columns_names = list(df_metadata['FIELDNAME'])
-                columns_types = list(df_metadata['INTTYPE'])
                 for idx, val in enumerate(columns_types):
                     if val in list(types_dict.keys()):
                         columns_types[idx] = types_dict[val]
@@ -126,6 +125,15 @@ class PostgresWrapper:
                                )
             else:
                 logger.debug('Таблица "{0}" уже существует в: "{1}"!'.format(table_name, self.engine))
+                inspector = inspect(self.engine)
+                for column in inspector.get_columns(table_name):
+                    print("Column: %s" % column['name'])
+                # print(inspector.get_columns(table_name)['name'])
+                print(columns_names)
+                # for schema in schemas:
+                #     print("schema: %s" % schema)
+                #     for column in inspector.get_columns(table_name, schema=schema):
+                #         print("Column: %s" % column)
             # metadata = MetaData(bind=self.connection)
             # table = Table(table_name,
             #               metadata,
