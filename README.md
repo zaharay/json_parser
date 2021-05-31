@@ -36,22 +36,36 @@
 	-   [Peewee ORM манипуляция базами данных](https://python-scripts.com/peewee)
 
 
-#### Версия интерпретатора Python и перечень используемых модулей:<a name="python"></a>
-*   Python - Python 3.5.3
-*   lxml - v. 4.6.3
-*   pytz - v. 2021.1
-*   numpy - v. 1.18.5
-*   python-dateutil - v. 2.8.1
-*   six - v. 1.15.0
-*   pandas - v. 0.25.3
-*   chardet - v. 4.0.0
-*   urllib3 - v. 1.26.4
-*   idna - v. 2.10
-*   certifi - v. 2020.12.5
-*   requests - v. 2.25.1 
-*   psycopg2 - v. 2.8.6
-*   SQLAlchemy - v. 1.3.24
-*   
+#### Перечень используемых модулей для Python:<a name="python"></a>
+*	Python v. 3.5.3: 
+	*   lxml - v. 4.6.3
+	*   pytz - v. 2021.1
+	*   numpy - v. 1.18.5
+	*   python-dateutil - v. 2.8.1
+	*   six - v. 1.15.0
+	*   __pandas - v. 0.25.3__
+	*   chardet - v. 4.0.0
+	*   urllib3 - v. 1.26.4
+	*   idna - v. 2.10
+	*   certifi - v. 2020.12.5
+	*   __requests - v. 2.25.1__ 
+	*   psycopg2 - v. 2.8.6
+	*   __SQLAlchemy - v. 1.3.24__
+*   Python v. 3.9.0:
+	*	python_dateutil - v. 2.8.1
+	*	numpy - v. 1.20.3
+	*	pytz - v. 2021.1
+	*	six - v. 1.16.0
+	*	__pandas - v. 1.2.4__
+	*	idna - v. 2.10
+	*	urllib3 - v. 1.26.5
+	*	certifi - v. 2021.5.30
+	*	chardet - v. 4.0.0
+	*	__requests - v. 2.25.1__
+	*	greenlet - v. 1.1.0
+	*	__SQLAlchemy - v. 1.4.17__
+	*	__psycopg2 - v. 2.8.6__
+
 
 #### Ansible AWX:<a name="ansible"></a>
 *	[Введение в автоматизацию с помощью Ansible](https://www.cisco.com/c/dam/m/ru_ru/training-events/2019/cisco-connect/pdf/introduction_automation_with_ansible_idrey.pdf)

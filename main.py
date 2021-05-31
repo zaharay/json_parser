@@ -1,6 +1,6 @@
 import os
 import argparse
-from settings import logger_config
+from log_settings import logger_config
 from utils import config_parser
 import logging.config
 from json_proc import Datamart, get_params

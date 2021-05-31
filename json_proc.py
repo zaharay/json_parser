@@ -6,7 +6,7 @@ json_proc.py
 import os
 import json
 import pandas as pd
-from settings import logger_config
+from log_settings import logger_config
 import logging.config
 import requests
 from requests.exceptions import HTTPError
@@ -19,7 +19,7 @@ logger = logging.getLogger('app_logger')
 
 def get_params(config, section='host'):
     """Получение параметров по конфигурации"""
-    if section is 'work_localhost' or section is 'home_localhost':
+    if section == 'work_localhost' or section == 'home_localhost':
         path_list = config['path'].split('/')
         datamarts_file = path_list[-1]
         datamarts_path = '/'.join(path_list[:-1])
@@ -32,7 +32,7 @@ def get_params(config, section='host'):
         except FileNotFoundError as file_err:
             logger.exception('\nФайл "{}" не найден'.format(datamarts_file))
             return None, None, None, []
-    elif section is 'host':
+    elif section == 'host':
         datamarts_path = config['datamarts_url']
         metadata_path = config['metadata_url']
         data_path = config['data_url']
