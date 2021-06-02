@@ -14,10 +14,18 @@
 *   utils.py - модуль со вспомогательными инструментами (функциями/методами):
 
 ## Полезные ссылки (по разделам):
+*   [Python (install/update)](#python)
 *   [REST API, Requests, JSON response](#requests)
 *   [Object Relational Mapping (ORM)](#orm)
 *   [Версия интерпретатора Python и перечень используемых модулей](#python)
 *	[Ansible/AWX](#ansible)
+
+#### Python (install/update):<a name="python"></a>
+*	[How to install Python on Linux](https://opensource.com/article/20/4/install-python-linux)
+*	[Установка Python 3.9 на Ubuntu 20.04 LTS](https://setiwik.ru/ustanovka-python-3-9-na-ubuntu-20-04-lts/)
+*	[Unable to set default python version to python3 in ubuntu](https://stackoverflow.com/questions/41986507/unable-to-set-default-python-version-to-python3-in-ubuntu)
+*	[How to install Python packages from the tar.gz file without using pip install](https://stackoverflow.com/questions/36014334/how-to-install-python-packages-from-the-tar-gz-file-without-using-pip-install)
+*	[Python3: ImportError: No module named '_ctypes' when using Value from module multiprocessing](https://stackoverflow.com/questions/27022373/python3-importerror-no-module-named-ctypes-when-using-value-from-module-mul)
 
 #### REST API, Requests, JSON response:<a name="request"></a>
 *   [REST API: что это простыми словами: принципы, стандарты, описание](https://boodet.online/reastapi)
@@ -37,7 +45,7 @@
 
 
 #### Перечень используемых модулей для Python:<a name="python"></a>
-*	Python v. 3.5.3: 
+*	***Python v. 3.5.3***: 
 	*   lxml - v. 4.6.3
 	*   pytz - v. 2021.1
 	*   numpy - v. 1.18.5
@@ -51,11 +59,11 @@
 	*   __requests - v. 2.25.1__ 
 	*   psycopg2 - v. 2.8.6
 	*   __SQLAlchemy - v. 1.3.24__
-*   Python v. 3.9.0:
+*   ***Python v. 3.9.0***:
+	*	six - v. 1.16.0
 	*	python_dateutil - v. 2.8.1
 	*	numpy - v. 1.20.3
 	*	pytz - v. 2021.1
-	*	six - v. 1.16.0
 	*	__pandas - v. 1.2.4__
 	*	idna - v. 2.10
 	*	urllib3 - v. 1.26.5
@@ -64,7 +72,7 @@
 	*	__requests - v. 2.25.1__
 	*	greenlet - v. 1.1.0
 	*	__SQLAlchemy - v. 1.4.17__
-	*	__psycopg2 - v. 2.8.6__
+	*	__psycopg2_binary__ - v. 2.8.6__
 
 
 #### Ansible AWX:<a name="ansible"></a>
