@@ -39,10 +39,20 @@
 	-   [SQLAlchemy docs](https://docs.sqlalchemy.org/en/13/orm/tutorial.html)
 	-	[Создание схемы базы данных в SQLAlchemy Core](https://pythonru.com/biblioteki/shemy-sqlalchemy-core)
 	-   [SQLAlchemy для новичков](https://gadjimuradov.ru/post/sqlalchemy-dlya-novichkov/)
+	-   [Gentle 'drop tables' using sqlalchemy](https://gist.github.com/riffm/1678194)
 *   Peewee
 	-   [peewee docs](http://docs.peewee-orm.com/en/latest/)
 	-   [Peewee ORM манипуляция базами данных](https://python-scripts.com/peewee)
 
+#### Ansible AWX:<a name="ansible"></a>
+*	[Введение в автоматизацию с помощью Ansible](https://www.cisco.com/c/dam/m/ru_ru/training-events/2019/cisco-connect/pdf/introduction_automation_with_ansible_idrey.pdf)
+*	[Полное руководство Ansible, 3 изд.](http://onreader.mdl.ru/MasteringAnsible.3ed/content/index.html#Preface)
+*	[AWX Installation](https://github.com/ansible/awx/blob/devel/INSTALL.md)
+*	[Ansible Tower (User Guide)](https://docs.ansible.com/ansible-tower/latest/html/userguide/index.html)
+*	[Ansible Tower (Admin Guide)](https://docs.ansible.com/ansible-tower/latest/html/administration/index.html)
+*	[AWX Google Groups](https://groups.google.com/forum/#!forum/awx-project)
+*	[AWX Demo - 2 Hours - Matt Jones - Lead developer of tower. (Great for a technical understanding)](https://www.ansible.com/resources/webinars-training/awx-demo-2017)
+*	[AWX Demo (Youtube) - No audio but quite useful for the initial setup (After installation)](https://www.youtube.com/watch?v=ZatqBgn_Wic&t=288s)
 
 #### Перечень используемых модулей для Python:<a name="python"></a>
 *	***Python v. 3.5.3***: 
@@ -72,16 +82,9 @@
 	*	__requests - v. 2.25.1__
 	*	greenlet - v. 1.1.0
 	*	__SQLAlchemy - v. 1.4.17__
-	*	__psycopg2_binary__ - v. 2.8.6__
+	*	__psycopg2_binary__ - v. 2.8.6
 
-
-#### Ansible AWX:<a name="ansible"></a>
-*	[Введение в автоматизацию с помощью Ansible](https://www.cisco.com/c/dam/m/ru_ru/training-events/2019/cisco-connect/pdf/introduction_automation_with_ansible_idrey.pdf)
-*	[Полное руководство Ansible, 3 изд.](http://onreader.mdl.ru/MasteringAnsible.3ed/content/index.html#Preface)
-*	[AWX Installation](https://github.com/ansible/awx/blob/devel/INSTALL.md)
-*	[Ansible Tower (User Guide)](https://docs.ansible.com/ansible-tower/latest/html/userguide/index.html)
-*	[Ansible Tower (Admin Guide)](https://docs.ansible.com/ansible-tower/latest/html/administration/index.html)
-*	[AWX Google Groups](https://groups.google.com/forum/#!forum/awx-project)
-*	[AWX Demo - 2 Hours - Matt Jones - Lead developer of tower. (Great for a technical understanding)](https://www.ansible.com/resources/webinars-training/awx-demo-2017)
-*	[AWX Demo (Youtube) - No audio but quite useful for the initial setup (After installation)](https://www.youtube.com/watch?v=ZatqBgn_Wic&t=288s)
+#### Перечень возможных доработок:<a name="modification"></a>
+*	Загрузка данных из json в pandas DataFrame без принудительной типизации, все столбцы сделать текстовыми и разбирать в модуле db_mirror.py
 *	
+

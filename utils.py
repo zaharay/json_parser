@@ -15,7 +15,6 @@ def config_parser(file_path, section='host'):
     Парсер файла конфигурации
     :param config_path: путь к файлу конфигурации
     :return: словарь с URL-адресами ресурсов (списка витрин, метаданных витрин, данных)
-
     """
     # with open(file_path, 'r') as file:
     #     config = dict()
@@ -70,6 +69,8 @@ def replace_list_by_dict(my_list, my_dict):
 def interval_extract(arr_list):
     """
     Преобразование списка в интервалы
+    :param arr_list: список действительных чисел
+    :return: генератор интервалов
     """
     arr_list = sorted(set(arr_list))
     range_start = previous_number = arr_list[0]
@@ -85,7 +86,11 @@ def interval_extract(arr_list):
 
 def get_string_intervals(arr_list):
     """
-    Преобразование списка [2, 3, 4, 5, 7, 8, 9, 11] в строку с интервалами вида: "[2...5], [7...9], 11"
+    Преобразование списка, например: [-2.5, -3.5, -1.5, -1, 2, 3, 4, 5, 7, 8, 9, 11], в строку с интервалами,
+    вида: "[-3.5...-1.5], -1, [2...5], [7...9], 11". Интервал образовывается последовательными значениями отличными
+    после сортировки на 1.
+    :param arr_list: список действительных чисел
+    :return: строка с интервалами и отдельными значениями через ', '
     """
     intervals = list(interval_extract(arr_list))
     res = ''

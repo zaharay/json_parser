@@ -70,7 +70,6 @@ class Datamart:
         self.data = self.get_data_as_df()  # pandas DataFrame
 
     def fields_format_conversion(self):
-        print(self.data.shape)
         # Поля со значениями типа Float ('INTTYPE' == 'P')
         float_fieldnames = self.metadata[self.metadata['INTTYPE'] == 'P']['FIELDNAME']
         if len(float_fieldnames) > 0:
@@ -84,10 +83,11 @@ class Datamart:
         date_fieldnames = self.metadata[self.metadata['INTTYPE'] == 'D']['FIELDNAME']
         if len(date_fieldnames) > 0:
             for fieldname in date_fieldnames:
-                self.data[fieldname] = pd.to_datetime(self.data[fieldname], errors='coerce')
-                err_date = self.data[self.data[fieldname].isnull()].replace(pd.NaT, '')
-                err_date = get_string_intervals([x + 1 for x in err_date.index.to_list()])  # нумерация строк с 1
-                logger.debug('\nВитрина "{0}" - Ошибка формата даты на строках: {1}'.format(self.name, err_date))
+                # self.data[fieldname] = pd.to_datetime(self.data[fieldname], errors='coerce')
+                # err_date = self.data[self.data[fieldname].isnull()].replace(pd.NaT, '')
+                # err_date = get_string_intervals([x + 1 for x in err_date.index.to_list()])  # нумерация строк с 1
+                # logger.debug('Витрина "{0}" - Ошибка формата/значения даты на строках: {1}'.format(self.name, err_date))
+                self.data[fieldname] = self.data[fieldname].astype(str) # т.к. форматы даты отличаются в BW и Postgres
 
         return self.data
 
