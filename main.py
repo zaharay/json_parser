@@ -16,6 +16,7 @@ logger = logging.getLogger('app_logger')  # основной логгер
 
 
 def main():
+
     config = config_parser(args.config, section=LOCATION)
     datamarts_path, metadata_path, data_path, dm_names_list = get_params(config, LOCATION)
     logger.debug('\nКонфигурация:\n\tdatamarts_path = {0}\n\tmetadata_path = {1}\n\tdata_path = {2}'.format(

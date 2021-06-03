@@ -23,13 +23,6 @@ _type_bw2alchemy = {
     'D': Date      # DATS
 }
 
-_type_alchemy2sql = {
-    String: 'VARCHAR',
-    Integer: 'INTEGER',
-    Float: 'DOUBLE_PRECISION',
-    Date: 'DATE'
-}
-
 _type_sql2alchemy = {
     'VARCHAR': String,
     'INTEGER': Integer,
@@ -56,6 +49,7 @@ class PostgresWrapper:
         self.rebuild_db = rebuild_db  # признак пересоздания БД
         self.connection = self.connect()
         self.engine = self.connection.engine
+
         # session = sessionmaker(
         #     bind=self.connection.engine,
         #     autocommit=True,  # все изменения в подключении принимаются
@@ -98,9 +92,7 @@ class PostgresWrapper:
 
     def create_table_from_df(self, table_name, df_metadata, df_data):
         try:
-            # new_columns_names = list(df_metadata['FIELDNAME'])
-            # new_columns_types = list(df_metadata['INTTYPE'])
-            create_flag = False  # флаг создания таблицы
+            create_flag = False  # флаг создания/пересоздания таблицы
 
             new_columns = {}
             for index, row in df_metadata.iterrows():
@@ -109,28 +101,14 @@ class PostgresWrapper:
                     new_columns[row['FIELDNAME']] = _type_bw2alchemy[bw_type]  # приведение типа BW к типу SQLAlchemy
                 else:
                     logger.error(
-                        'При создании таблицы "{0}" обнаружен неизвестный тип данных: "{1}"!'.format(table_name, val),
+                        'При создании таблицы "{0}" обнаружен неизвестный тип данных: "{1}"!'.format(
+                            table_name, bw_type),
                         'Таблица не создана!', sep='\n')
                     return
             # print(*zip(new_columns.keys(), new_columns.values()), sep='\n')
 
-            # for idx, val in enumerate(new_columns_types):
-            #     if val in list(_type_bw2alchemy.keys()):
-            #         new_columns_types[idx] = _type_bw2alchemy[val]
-            #     else:
-            #         logger.error(
-            #             'При создании таблицы "{0}" обнаружен неизвестный тип данных: "{1}"!'.format(table_name, val),
-            #             'Таблица не создана!', sep='\n')
-            #         return
-
             if self.engine.has_table(table_name):
                 logger.debug('Таблица "{0}" уже существует в: "{1}"!'.format(table_name, self.engine))
-                # meta = MetaData()
-                # meta.bind = self.engine
-                # meta.reflect()
-                # datatable = meta.tables[table_name]
-                # print([str(c.type) for c in datatable.columns])
-                # return
 
                 inspector = inspect(self.engine)
                 exist_columns = inspector.get_columns(table_name)
@@ -149,27 +127,19 @@ class PostgresWrapper:
                     exist_col_type = _type_sql2alchemy[exist_col_type].__name__
                     new_col_type = new_columns[new_col_name].__name__
 
-                    if not  new_col_type == exist_col_type:
-                        logger.debug(f'В таблице "{table_name}" тип столбца "{new_col_name}" ({new_col_type})'
-                                     f' не соответствует существующему ({exist_col_type})!')
+                    if not new_col_type == exist_col_type:
+                        logger.debug('В таблице "{0}" тип столбца "{1}" ({2}) не соответствует '
+                                     'существующему ({3})!'.format(table_name,
+                                                                   new_col_name,
+                                                                   new_col_type,
+                                                                   exist_col_type))
+
                         create_flag = True  # требуется пересоздание таблицы
                         break
 
-                logger.debug((f'Структура загружаемых данных таблицы "{table_name}" соответствует существующей',
-                              f'Пересоздание таблицы "{table_name}"!')[1 if create_flag else 0])
+                logger.debug(('Структура загружаемых данных таблицы "{}" соответствует существующей.'.format(table_name),
+                              'Пересоздание таблицы "{}"!'.format(table_name))[1 if create_flag else 0])
 
-                return
-                # exist_columns_names =
-                print(exist_columns_names)
-                return
-
-                for column in inspector.get_columns(table_name):
-                    print(column['name'], column['type'])
-                # print(inspector.get_columns(table_name)['name'])
-                print(columns_names)
-                print(*columns_types, sep='\n')
-
-                # self.delete_table(table)
 
                 return
 

@@ -66,3 +66,31 @@ def replace_list_by_dict(my_list, my_dict):
             print('Err!')
     return my_list
 
+
+def interval_extract(arr_list):
+    """
+    Преобразование списка в интервалы
+    """
+    arr_list = sorted(set(arr_list))
+    range_start = previous_number = arr_list[0]
+
+    for number in arr_list[1:]:
+        if number == previous_number + 1:
+            previous_number = number
+        else:
+            yield [range_start, previous_number]
+            range_start = previous_number = number
+    yield [range_start, previous_number]
+
+
+def get_string_intervals(arr_list):
+    """
+    Преобразование списка [2, 3, 4, 5, 7, 8, 9, 11] в строку с интервалами вида: "[2...5], [7...9], 11"
+    """
+    intervals = list(interval_extract(arr_list))
+    res = ''
+    for i, interval in enumerate(intervals):
+        if interval[0] == interval[-1]:
+            interval = interval[0]
+        res += ('', ', ')[1 if i > 0 else 0] + str(interval).replace(', ', '...')
+    return res

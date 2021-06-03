@@ -11,7 +11,7 @@ import logging.config
 import requests
 from requests.exceptions import HTTPError
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
-# import urllib.parse
+from utils import get_string_intervals
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)  # запрещаю предупреждение
 
@@ -86,7 +86,8 @@ class Datamart:
             for fieldname in date_fieldnames:
                 self.data[fieldname] = pd.to_datetime(self.data[fieldname], errors='coerce')
                 err_date = self.data[self.data[fieldname].isnull()].replace(pd.NaT, '')
-                logger.debug('\nВитрина "{0}" - Ошибка формата даты на строках: {1}'.format(self.name, err_date.index.to_list()))
+                err_date = get_string_intervals([x + 1 for x in err_date.index.to_list()])  # нумерация строк с 1
+                logger.debug('\nВитрина "{0}" - Ошибка формата даты на строках: {1}'.format(self.name, err_date))
 
         return self.data
 
