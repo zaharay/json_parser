@@ -1,9 +1,8 @@
-import os
+
 import argparse
 from datetime import datetime
 from log_settings import logger_config
 from utils import config_parser, get_timedelta
-import logging.config
 from json_proc import *
 from db_mirror import PostgresWrapper
 
@@ -77,25 +76,6 @@ def main():
 
     pw.close()
 
-    """
-    for dm_name in data_dict['datamarts_list']:
-        dm_name = dm_name.split('/')[-1]  # последняя часть наименования, после разделения по '/'
-
-        # if dm_name == 'AIRSHINYD00':  # AIRSHINYD00 - data oracle (BW), # AIRFINAN00 - double oracle (BW)
-        if LOCATION == 'host':
-            data_dict['metadata_path'] = data_dict['metadata_path'] + \
-                                         r'?tabname=' + 
-            
-        dm = Datamart(data_dict['metadata_path'],
-                      data_dict['data_path'],
-                      dm_name,
-                      )  # экземпляр класса витрины
-
-        
-        pw.create_table_from_df(dm_name, dm.metadata, dm.data)
-
-    pw.close()
-    """
 
 if __name__ == "__main__":
     s_logger.debug('Cтарт')
