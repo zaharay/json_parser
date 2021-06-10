@@ -33,6 +33,7 @@
 *   [How to write a simple Postgres JSON wrapper with Python](https://levelup.gitconnected.com/how-to-write-a-simple-postgres-json-wrapper-with-python-ef09572daa66)
 *   [How do I get JSON data from RESTful service using Python?](https://stackoverflow.com/questions/7750557/how-do-i-get-json-data-from-restful-service-using-python)
 *   [Read JSON response in Python](https://stackoverflow.com/questions/33282067/read-json-response-in-python)
+*	Для загрузки страницы через webdriver браузера Chrome, необходимо скачать [chromedriver](https://chromedriver.storage.googleapis.com/index.html?path=87.0.4280.88/)
 
 #### ORM:<a name="orm"></a>
 *   SQLAlchemy
@@ -75,14 +76,40 @@
 	*	numpy - v. 1.20.3
 	*	pytz - v. 2021.1
 	*	__pandas - v. 1.2.4__
+
 	*	idna - v. 2.10
 	*	urllib3 - v. 1.26.5
 	*	certifi - v. 2021.5.30
 	*	chardet - v. 4.0.0
 	*	__requests - v. 2.25.1__
+
 	*	greenlet - v. 1.1.0
 	*	__SQLAlchemy - v. 1.4.17__
+
 	*	__psycopg2_binary__ - v. 2.8.6
+
+	*	cssselect - v. 1.1.0
+	*	soupsieve - v. 2.2.1
+	* 	__beautifulsoup4__ - v. 4.9.3
+
+	*	__selenium__ - v. 3.141.0
+
+	*	appdirs - v. 1.4.4
+	*	pyee - v. 8.1.0 
+	*	websockets - v. 8.1
+	*	tqdm - v. 4.61.0
+	*	lxml - v. 4.6.3
+	*	pyquery - v. 1.4.3
+	*	parse - v. 1.19.0
+	*	bs4 - v. 0.0.1
+	*	pyppeteer - v. 0.2.5
+	*	w3lib - v. 1.22.0
+	*	fake-useragent - v. 0.1.11
+	*	__requests_html__ - v. 0.10.0
+
+	
+
+
 
 #### Перечень возможных доработок:<a name="modification"></a>
 *	Загрузка данных из json в pandas DataFrame без принудительной типизации, все столбцы сделать текстовыми и разбирать в модуле db_mirror.py

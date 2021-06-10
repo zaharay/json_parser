@@ -51,7 +51,6 @@ class PostgresWrapper:
 
         self.rebuild_db = rebuild_db  # признак пересоздания БД
         self.connection = self.connect()
-        self.engine = self.connection.engine
 
         # session = sessionmaker(
         #     bind=self.connection.engine,
@@ -68,19 +67,25 @@ class PostgresWrapper:
         Создание подключения к БД
         @param:
         """
-        engine = create_engine(
-            'postgresql://{0}:{1}@{2}:{3}/{4}'.format(
-                self.user,
-                self.password,
-                self.host,
-                self.port,
-                self.db_name if db_created else ""),
-            encoding='utf-8')  # , echo=True)
-        # self.connection = self.engine.connect()
-        return engine.connect()
+        try:
+            engine = create_engine(
+                'postgresql://{0}:{1}@{2}:{3}/{4}'.format(
+                    self.user,
+                    self.password,
+                    self.host,
+                    self.port,
+                    self.db_name if db_created else ""),
+                encoding='utf-8')  # , echo=True)
+            # self.connection = self.engine.connect()
+            return engine.connect()
+        except Exception as err:
+            logger.exception('\nОшибка подключения к БД:\n\t{}'.format(err))
+            return None
 
     def connect(self):
         connection = self.get_connection()
+        if connection is None:
+            return None
         if self.rebuild_db:  # пересоздание БД
             connection.execute('DROP DATABASE IF EXISTS {}'.format(self.db_name))
             connection.execute('CREATE DATABASE {}'.format(self.db_name))
@@ -88,7 +93,7 @@ class PostgresWrapper:
 
     def drop_table(self, table):
         try:
-            table.drop(self.engine)
+            table.drop(self.connection.engine)
             logger.debug('Таблица "{0}": Успешно удалена!'.format(table.name), sep='\n')
         except Exception as ex:
             logger.debug('Исключение при удалении таблицы "{0}": {1}'.format(table.name, ex), sep='\n')
@@ -101,7 +106,7 @@ class PostgresWrapper:
             # т.е. в таких: PostgreSQL, MS SQL Server
             trans = conn.begin()
             # inspector = reflection.Inspector.from_engine(engine)
-            inspector = inspect(self.engine)
+            inspector = inspect(self.connection.engine)
             # Сначала собираю все данные, прежде чем что-либо сбрасывать (drop).
             # Некоторые БД блокируются после того, как что-то было удалено в транзакции.
             metadata = MetaData()
@@ -133,81 +138,130 @@ class PostgresWrapper:
             trans.rollback()
             # raise
 
-    def create_table_from_df(self, table_name, df_metadata, df_data):
+    def close(self):
+        if self.connection is not None:
+            self.connection.close()
+
+    # def create_table_from_df(self, table_name, df_metadata, df_data):
+    #     try:
+    #         # Флаг создания/пересоздания таблицы:
+    #         # * True - таблица создается/пересоздается в любом случае
+    #         # * False - если создавать/пересоздавать требуется по условиям (см. ниже)
+    #         logger.debug('*'*10 + ' Таблица "{0}" '.format(table_name) + '*'*10)
+    #
+    #         create_flag = False
+    #
+    #         new_columns = {}
+    #         for index, row in df_metadata.iterrows():
+    #             bw_type = row['INTTYPE']
+    #             if bw_type in list(_type_bw2alchemy.keys()):
+    #                 new_columns[row['FIELDNAME']] = _type_bw2alchemy[bw_type]  # приведение типа BW к типу SQLAlchemy
+    #             else:
+    #                 logger.error(
+    #                     'Обнаружен неизвестный тип данных: "{}"!'.format(bw_type),
+    #                     'Таблица не создана!', sep='\n')
+    #                 return None
+    #         # print(*zip(new_columns.keys(), new_columns.values()), sep='\n')
+    #
+    #         if self.connection.engine.has_table(table_name):
+    #             logger.debug('Таблица уже существует в: "{}"!'.format(self.connection.engine))
+    #
+    #             inspector = inspect(self.connection.engine)
+    #             exist_columns = inspector.get_columns(table_name)
+    #
+    #             # Проверка наличия столбца в таблице (по наименованию):
+    #             for new_col_name in new_columns.keys():
+    #                 if new_col_name not in [str(col['name']) for col in exist_columns]:
+    #                     logger.debug('В таблице отсутствует столбец с наименованием: "{}"!'.format(new_col_name))
+    #                     create_flag = True  # требуется пересоздание таблицы
+    #                     break
+    #
+    #                 # Проверка типа данных столбца:
+    #                 exist_col_type = str([exist_col['type'] for exist_col in exist_columns if exist_col['name'] ==
+    #                                       new_col_name][0])
+    #                 exist_col_type = _type_sql2alchemy[exist_col_type].__name__
+    #                 new_col_type = new_columns[new_col_name].__name__
+    #
+    #                 if not new_col_type == exist_col_type:
+    #                     logger.debug('Тип столбца "{0}" ({1}) не соответствует '
+    #                                  'существующему ({2})!'.format(new_col_name,
+    #                                                                new_col_type,
+    #                                                                exist_col_type))
+    #
+    #                     create_flag = True  # требуется пересоздание таблицы
+    #                     break
+    #
+    #             logger.debug(('Структура загружаемых данных соответствует существующей!',
+    #                           'Структура загружаемых данных отличается от существующей!')[1 if create_flag else 0])
+    #
+    #             # Удаление таблицы:
+    #             # if create_flag:  # раскомментир-ть, если таблица создается/пересоздается по условиям (см. выше)
+    #             self.gentle_drop_table(table_name)
+    #             logger.debug('Успешно удалена!')
+    #         else:
+    #             logger.debug('Не найдена в: "{}"!'.format(self.connection.engine))
+    #             create_flag = True  # требуется создание таблицы
+    #
+    #         # if create_flag:  # раскомментир-ть, если таблица создается/пересоздается по условиям (см. выше)
+    #
+    #         # primary_key_flags = [True, False, False, False]
+    #         # nullable_flags = [False, False, False, False]
+    #         metadata = MetaData(bind=self.connection.engine)
+    #         table = Table(table_name,
+    #                       metadata,
+    #                       *(Column(column_name, column_type)
+    #                         for column_name, column_type in zip(new_columns.keys(), new_columns.values())
+    #                         ),
+    #                       PrimaryKeyConstraint(*(Column(column_name) for column_name in new_columns.keys()),
+    #                                            name=table_name + '_pk')
+    #                       )
+    #
+    #         metadata.create_all(self.connection.engine)  # table.create()
+    #
+    #         df_data.to_sql(name=table_name,
+    #                        con=self.connection,
+    #                        if_exists='append',
+    #                        index=False
+    #                        )
+    #         logger.debug('Успешно создана!')
+    #
+    #     except Exception as ex:
+    #         logger.error('Исключение при создании таблицы: {}'.format(ex))
+
+    def fast_create_table_from_df(self, table_name, df_metadata, df_data):
+        """
+        Быстрое создание и наполнение таблиц (без проверок соответствия типов данных и структуры)
+        """
         try:
             # Флаг создания/пересоздания таблицы:
             # * True - таблица создается/пересоздается в любом случае
             # * False - если создавать/пересоздавать требуется по условиям (см. ниже)
-            logger.debug('*'*10 + ' Таблица "{0}" '.format(table_name) + '*'*10)
+            logger.debug('*' * 10 + ' Таблица "{0}" '.format(table_name) + '*' * 10)
 
-            create_flag = False
-
-            new_columns = {}
-            for index, row in df_metadata.iterrows():
-                bw_type = row['INTTYPE']
-                if bw_type in list(_type_bw2alchemy.keys()):
-                    new_columns[row['FIELDNAME']] = _type_bw2alchemy[bw_type]  # приведение типа BW к типу SQLAlchemy
-                else:
-                    logger.error(
-                        'Обнаружен неизвестный тип данных: "{}"!'.format(bw_type),
-                        'Таблица не создана!', sep='\n')
-                    return
-            # print(*zip(new_columns.keys(), new_columns.values()), sep='\n')
-
-            if self.engine.has_table(table_name):
-                logger.debug('Таблица уже существует в: "{}"!'.format(self.engine))
-
-                inspector = inspect(self.engine)
-                exist_columns = inspector.get_columns(table_name)
-
-                # Проверка наличия столбца в таблице (по наименованию):
-                for new_col_name in new_columns.keys():
-                    if new_col_name not in [str(col['name']) for col in exist_columns]:
-                        logger.debug('В таблице отсутствует столбец с наименованием: "{}"!'.format(new_col_name))
-                        create_flag = True  # требуется пересоздание таблицы
-                        break
-
-                    # Проверка типа данных столбца:
-                    exist_col_type = str([exist_col['type'] for exist_col in exist_columns if exist_col['name'] ==
-                                          new_col_name][0])
-                    exist_col_type = _type_sql2alchemy[exist_col_type].__name__
-                    new_col_type = new_columns[new_col_name].__name__
-
-                    if not new_col_type == exist_col_type:
-                        logger.debug('Тип столбца "{0}" ({1}) не соответствует '
-                                     'существующему ({2})!'.format(new_col_name,
-                                                                   new_col_type,
-                                                                   exist_col_type))
-
-                        create_flag = True  # требуется пересоздание таблицы
-                        break
-
-                logger.debug(('Структура загружаемых данных соответствует существующей!',
-                              'Структура загружаемых данных отличается от существующей!')[1 if create_flag else 0])
+            if self.connection.engine.has_table(table_name):
+                logger.debug('Таблица уже существует в: "{}"!'.format(self.connection.engine))
 
                 # Удаление таблицы:
-                # if create_flag:  # раскомментир-ть, если таблица создается/пересоздается по условиям (см. выше)
                 self.gentle_drop_table(table_name)
                 logger.debug('Успешно удалена!')
             else:
-                logger.debug('Не найдена в: "{}"!'.format(self.engine))
-                create_flag = True  # требуется создание таблицы
+                logger.debug('Не найдена в: "{}"!'.format(self.connection.engine))
 
-            # if create_flag:  # раскомментир-ть, если таблица создается/пересоздается по условиям (см. выше)
+            columns_types = {}
+            for index, row in df_metadata.iterrows():
+                columns_types[row['FIELDNAME']] = String  # все столбцы строковые
 
-            # primary_key_flags = [True, False, False, False]
-            # nullable_flags = [False, False, False, False]
-            metadata = MetaData(bind=self.engine)
+            metadata = MetaData(bind=self.connection.engine)
             table = Table(table_name,
                           metadata,
                           *(Column(column_name, column_type)
-                            for column_name, column_type in zip(new_columns.keys(), new_columns.values())
+                            for column_name, column_type in zip(columns_types.keys(), columns_types.values())
                             ),
-                          PrimaryKeyConstraint(*(Column(column_name) for column_name in new_columns.keys()),
+                          PrimaryKeyConstraint(*(Column(column_name) for column_name in df_metadata['FIELDNAME']),
                                                name=table_name + '_pk')
                           )
 
-            metadata.create_all(self.engine)  # table.create()
+            metadata.create_all(self.connection.engine)  # table.create()
 
             df_data.to_sql(name=table_name,
                            con=self.connection,
@@ -215,10 +269,8 @@ class PostgresWrapper:
                            index=False
                            )
             logger.debug('Успешно создана!')
+            return 0
 
         except Exception as ex:
-            logger.error('Исключение при создании таблицы: {}'.format(ex))
-
-    def close(self):
-        if self.connection is not None:
-            self.connection.close()
+            logger.error('\nИсключение при создании таблицы: {}'.format(ex))
+            return None

@@ -6,15 +6,20 @@ utils.py
  * replace_list_by_dict() - замена элементов списка значениями из словаря (по ключу)
 """
 
-
 import pandas as pd
 import configparser
+import logging.config
+from datetime import datetime
+
+logger = logging.getLogger('app_logger')
+
 
 def config_parser(file_path, section='host'):
     """
     Парсер файла конфигурации
-    :param config_path: путь к файлу конфигурации
-    :return: словарь с URL-адресами ресурсов (списка витрин, метаданных витрин, данных)
+    :param file_path: путь к файлу конфигурации
+    :param section: раздел (локализация) файла конфигурации
+    :return: словарь с параметрами ресурсов (URL-адресами, параметрами соединения к БД) и настройками
     """
     # with open(file_path, 'r') as file:
     #     config = dict()
@@ -23,13 +28,16 @@ def config_parser(file_path, section='host'):
     #         k, v = line.split(' = ')
     #         config[k] = v
     #     return config
-    config = configparser.ConfigParser()
-    config.read(file_path)
     result = dict()
-    for key in config[section]:
-        result[key] = config[section][key]
-    return result
-
+    try:
+        config = configparser.ConfigParser()
+        config.read(file_path)
+        for key in config[section]:
+            result[key] = config[section][key]
+        return result
+    except Exception as err:
+        logger.exception('\nОшибка парсинга файла конфигурации:\n\t{}'.format(err))
+        return None
 
 def write_csv(filename, data):
     """
@@ -99,3 +107,21 @@ def get_string_intervals(arr_list):
             interval = interval[0]
         res += ('', ', ')[1 if i > 0 else 0] + str(interval).replace(', ', '...')
     return res
+
+
+def get_timedelta(str_start, str_stop):
+    """
+    Возвращает разницу во времени между двумя временными метками.
+    Формат строк на входе: 'ДД-ММ-ГГГГ ЧЧ:ММ:CC'.
+    :param str_start: метка старта
+    :param str_stop: метка завершения
+    :return: дельта типа 'datetime.timedelta'
+    """
+    try:
+        dt_start = datetime.strptime(str_start, '%d-%m-%Y %H:%M:%S')
+        dt_stop = datetime.strptime(str_stop, '%d-%m-%Y %H:%M:%S')
+        return dt_stop - dt_start
+    except Exception as err:
+        logger.exception('\nОшибка вычисления интервала времени:\n\t{}'.format(err))
+        return None
+
