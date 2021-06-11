@@ -10,6 +10,8 @@ import logging.config
 import requests
 from requests.exceptions import HTTPError
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
+from _normalize import _json_normalize
+from utils import is_python_version
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)  # запрещаю предупреждение
 
@@ -91,7 +93,10 @@ def get_df_from_json(path, tag, location='host'):
         else:  # 'work_localhost' or 'home_localhost'
             with open(path, 'r', encoding='utf-8') as json_file:
                 json_data = json.load(json_file)
-        return pd.json_normalize(json_data['{}'.format(str(tag))])  # pd.read_json(json_data['{}'.format(str(tag))])
+        if is_python_version(3.6):
+            return pd.json_normalize(json_data['{}'.format(str(tag))])  # pd.read_json(json_data['{}'.format(str(tag))])
+        else:
+            return _json_normalize(json_data['{}'.format(str(tag))])
     except Exception as ex:
         logger.debug('\nИсключение при получении фрейма данных по адресу: {0}\n\t{1}'.format(path, ex))
 

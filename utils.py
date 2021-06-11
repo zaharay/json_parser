@@ -5,7 +5,7 @@ utils.py
  * write_csv() - запись фрейма данных в csv-файл
  * replace_list_by_dict() - замена элементов списка значениями из словаря (по ключу)
 """
-
+import sys
 import pandas as pd
 import configparser
 import logging.config
@@ -125,3 +125,5 @@ def get_timedelta(str_start, str_stop):
         logger.exception('\nОшибка вычисления интервала времени:\n\t{}'.format(err))
         return None
 
+def is_python_version(version):
+    return version >= sys.version_info[0] + sys.version_info[1] / 10.
